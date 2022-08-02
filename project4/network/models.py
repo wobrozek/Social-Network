@@ -8,8 +8,18 @@ from django.db import models
 class User(AbstractUser):
     pass
 
-class Post():
-    author = models.ForeignKey("User", on_delete=models.CASCADE, related_name="author")
+class follow(models.Model):
+    user=models.ForeignKey("User", on_delete=models.CASCADE,related_name="followers")
+    followers=models.ManyToManyField("User",related_name="follower")
+
+#      def serialize(self):
+#         return{
+#             "id": self.id,
+#             "user": self.user,
+#             "followers":[user for follow in self.followers.all()]        
+#         }
+class Post(models.Model):
+    author = models.ForeignKey("User", on_delete=models.CASCADE)
     body = models.CharField(max_length=64)
     likes = models.IntegerField()
     timestamp=models.DateTimeField(auto_now_add=True)
@@ -24,9 +34,9 @@ class Post():
         }
 
 
-class Comment():
-    author = models.ForeignKey("User", on_delete=models.CASCADE, related_name="author")
-    post= models.ForeignKey("Post",on_delete=models.CASCADE, related_name="author")
+class Comment(models.Model):
+    author = models.ForeignKey("User", on_delete=models.CASCADE)
+    post= models.ForeignKey("Post",on_delete=models.CASCADE, related_name="posts")
     body = models.CharField(max_length=64)
     likes = models.IntegerField()
     timestamp=models.DateTimeField(auto_now_add=True)
